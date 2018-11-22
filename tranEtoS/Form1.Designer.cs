@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
             this.textServer = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,16 +43,21 @@
             this.Pwd = new System.Windows.Forms.TextBox();
             this.btnrefresh = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lbDataName = new System.Windows.Forms.ListBox();
             this.rbSql = new System.Windows.Forms.RadioButton();
             this.rbWindows = new System.Windows.Forms.RadioButton();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.cbExcelSheet = new System.Windows.Forms.ComboBox();
+            this.pgbWrite = new System.Windows.Forms.ProgressBar();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.clbExcelSheet = new System.Windows.Forms.CheckedListBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(254, 253);
+            this.button1.Location = new System.Drawing.Point(248, 473);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(135, 37);
             this.button1.TabIndex = 0;
@@ -63,7 +69,7 @@
             // 
             this.textServer.Location = new System.Drawing.Point(125, 29);
             this.textServer.Name = "textServer";
-            this.textServer.Size = new System.Drawing.Size(175, 21);
+            this.textServer.Size = new System.Drawing.Size(201, 21);
             this.textServer.TabIndex = 1;
             this.textServer.Text = "(local)";
             // 
@@ -114,9 +120,9 @@
             // cbDataName
             // 
             this.cbDataName.FormattingEnabled = true;
-            this.cbDataName.Location = new System.Drawing.Point(123, 138);
+            this.cbDataName.Location = new System.Drawing.Point(123, 173);
             this.cbDataName.Name = "cbDataName";
-            this.cbDataName.Size = new System.Drawing.Size(175, 20);
+            this.cbDataName.Size = new System.Drawing.Size(203, 20);
             this.cbDataName.TabIndex = 3;
             this.cbDataName.SelectedIndexChanged += new System.EventHandler(this.cbDataName_SelectedIndexChanged);
             // 
@@ -134,7 +140,7 @@
             this.UID.Location = new System.Drawing.Point(122, 78);
             this.UID.Name = "UID";
             this.UID.ReadOnly = true;
-            this.UID.Size = new System.Drawing.Size(176, 21);
+            this.UID.Size = new System.Drawing.Size(204, 21);
             this.UID.TabIndex = 5;
             // 
             // label5
@@ -152,21 +158,23 @@
             this.Pwd.Name = "Pwd";
             this.Pwd.PasswordChar = '*';
             this.Pwd.ReadOnly = true;
-            this.Pwd.Size = new System.Drawing.Size(176, 21);
+            this.Pwd.Size = new System.Drawing.Size(204, 21);
             this.Pwd.TabIndex = 5;
+            this.Pwd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Pwd_KeyDown);
             // 
             // btnrefresh
             // 
-            this.btnrefresh.Location = new System.Drawing.Point(305, 135);
+            this.btnrefresh.Location = new System.Drawing.Point(122, 132);
             this.btnrefresh.Name = "btnrefresh";
-            this.btnrefresh.Size = new System.Drawing.Size(66, 24);
+            this.btnrefresh.Size = new System.Drawing.Size(75, 24);
             this.btnrefresh.TabIndex = 0;
-            this.btnrefresh.Text = "刷新";
+            this.btnrefresh.Text = "数据库连接";
             this.btnrefresh.UseVisualStyleBackColor = true;
             this.btnrefresh.Click += new System.EventHandler(this.btnrefresh_Click);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lbDataName);
             this.groupBox1.Controls.Add(this.rbSql);
             this.groupBox1.Controls.Add(this.cbDataName);
             this.groupBox1.Controls.Add(this.rbWindows);
@@ -175,15 +183,27 @@
             this.groupBox1.Controls.Add(this.textServer);
             this.groupBox1.Controls.Add(this.UID);
             this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.btnClose);
             this.groupBox1.Controls.Add(this.btnrefresh);
+            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Location = new System.Drawing.Point(12, 77);
+            this.groupBox1.Location = new System.Drawing.Point(12, 172);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(377, 170);
+            this.groupBox1.Size = new System.Drawing.Size(377, 295);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "服务器验证";
+            // 
+            // lbDataName
+            // 
+            this.lbDataName.FormattingEnabled = true;
+            this.lbDataName.ItemHeight = 12;
+            this.lbDataName.Location = new System.Drawing.Point(118, 213);
+            this.lbDataName.Name = "lbDataName";
+            this.lbDataName.Size = new System.Drawing.Size(208, 76);
+            this.lbDataName.TabIndex = 7;
+            this.lbDataName.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lbDataName_MouseDoubleClick);
             // 
             // rbSql
             // 
@@ -195,6 +215,7 @@
             this.rbSql.Text = "sql server验证";
             this.rbSql.UseVisualStyleBackColor = true;
             this.rbSql.CheckedChanged += new System.EventHandler(this.rbSql_CheckedChanged);
+            this.rbSql.MouseClick += new System.Windows.Forms.MouseEventHandler(this.rbSql_MouseClick);
             // 
             // rbWindows
             // 
@@ -206,32 +227,59 @@
             this.rbWindows.Text = "windows验证";
             this.rbWindows.UseVisualStyleBackColor = true;
             this.rbWindows.CheckedChanged += new System.EventHandler(this.rbWindows_CheckedChanged);
+            this.rbWindows.MouseClick += new System.Windows.Forms.MouseEventHandler(this.rbWindows_MouseClick);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(236, 132);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(75, 24);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "断开连接";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(23, 213);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(89, 12);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "数据库表名称：";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(36, 141);
+            this.label6.Location = new System.Drawing.Point(35, 173);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(77, 12);
             this.label6.TabIndex = 2;
             this.label6.Text = "数据库名称：";
             // 
-            // cbExcelSheet
+            // pgbWrite
             // 
-            this.cbExcelSheet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbExcelSheet.FormattingEnabled = true;
-            this.cbExcelSheet.Location = new System.Drawing.Point(131, 51);
-            this.cbExcelSheet.Name = "cbExcelSheet";
-            this.cbExcelSheet.Size = new System.Drawing.Size(175, 20);
-            this.cbExcelSheet.TabIndex = 3;
+            this.pgbWrite.Location = new System.Drawing.Point(12, 481);
+            this.pgbWrite.Name = "pgbWrite";
+            this.pgbWrite.Size = new System.Drawing.Size(230, 23);
+            this.pgbWrite.TabIndex = 8;
+            // 
+            // clbExcelSheet
+            // 
+            this.clbExcelSheet.FormattingEnabled = true;
+            this.clbExcelSheet.Location = new System.Drawing.Point(131, 54);
+            this.clbExcelSheet.Name = "clbExcelSheet";
+            this.clbExcelSheet.Size = new System.Drawing.Size(207, 116);
+            this.clbExcelSheet.TabIndex = 9;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(401, 302);
+            this.ClientSize = new System.Drawing.Size(400, 522);
+            this.Controls.Add(this.clbExcelSheet);
+            this.Controls.Add(this.pgbWrite);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.cbExcelSheet);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox2);
@@ -266,7 +314,12 @@
         private System.Windows.Forms.RadioButton rbSql;
         private System.Windows.Forms.RadioButton rbWindows;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ComboBox cbExcelSheet;
+        private System.Windows.Forms.ListBox lbDataName;
+        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ProgressBar pgbWrite;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.CheckedListBox clbExcelSheet;
     }
 }
 
