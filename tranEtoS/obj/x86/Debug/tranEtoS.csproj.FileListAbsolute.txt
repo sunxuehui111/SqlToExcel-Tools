@@ -7,3 +7,6 @@ C:\Users\ctrpg\documents\visual studio 2010\Projects\tranEtoS\tranEtoS\obj\x86\D
 C:\Users\ctrpg\documents\visual studio 2010\Projects\tranEtoS\tranEtoS\obj\x86\Debug\tranEtoS.csproj.GenerateResource.Cache
 C:\Users\ctrpg\documents\visual studio 2010\Projects\tranEtoS\tranEtoS\obj\x86\Debug\tranEtoS.exe
 C:\Users\ctrpg\documents\visual studio 2010\Projects\tranEtoS\tranEtoS\obj\x86\Debug\tranEtoS.pdb
+C:\Users\ctrpg\Documents\Visual Studio 2010\tranEtoS\tranEtoS\bin\Debug\tranEtoS.exe.config
+C:\Users\ctrpg\Documents\Visual Studio 2010\tranEtoS\tranEtoS\obj\x86\Debug\tranEtoS.exe
+C:\Users\ctrpg\Documents\Visual Studio 2010\tranEtoS\tranEtoS\obj\x86\Debug\tranEtoS.pdb

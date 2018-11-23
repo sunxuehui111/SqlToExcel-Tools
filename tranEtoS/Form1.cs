@@ -45,6 +45,12 @@ namespace tranEtoS
         public static string connString;
         public static string sendStr;
         public bool inOrout = true;
+
+        /// <summary>
+        /// 导入  单击导入  第二次刷新 进度条控制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             if (inOrout)
@@ -100,6 +106,12 @@ namespace tranEtoS
                 initControl();
             }
         }
+
+        /// <summary>
+        /// 浏览   获取路径名 将Excel表名加入checklistbox中
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
             this.clbExcelSheet.Items.Clear();
@@ -130,6 +142,11 @@ namespace tranEtoS
 
         }
 
+        /// <summary>
+        /// 选择Windows验证 改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void rbWindows_CheckedChanged(object sender, EventArgs e)
         {
             if (rbWindows.Checked)
@@ -145,6 +162,11 @@ namespace tranEtoS
             }
         }
 
+        /// <summary>
+        /// 选择Sql Server身份验证
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void rbSql_CheckedChanged(object sender, EventArgs e)
         {
             if (rbSql.Checked)
@@ -160,6 +182,12 @@ namespace tranEtoS
             }
         }
 
+        /// <summary>
+        /// 连接按钮
+        /// 将数据库名加入Combobox中 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnrefresh_Click(object sender, EventArgs e)
         {
             if (cbDataName.SelectedItem.ToString() == "master")
@@ -184,6 +212,12 @@ namespace tranEtoS
             }
         }
 
+        /// <summary>
+        /// combobox 选择项
+        /// 将数据库中的表遍历打印在listbox中
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cbDataName_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbDataName.SelectedItem.ToString() != "master")
@@ -215,6 +249,11 @@ namespace tranEtoS
             }
         }
 
+        /// <summary>
+        /// 双击进入数据库表
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lbDataName_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             int index = this.lbDataName.IndexFromPoint(e.Location);
@@ -228,6 +267,11 @@ namespace tranEtoS
                 lbDataName.SelectedIndex = -1;
         }
 
+        /// <summary>
+        /// 关联Enter键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Pwd_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)//如果输入的是回车键  
@@ -263,7 +307,12 @@ namespace tranEtoS
             this.btnrefresh_Click(sender, e);//触发button事件  
         }
 
-
+        /// <summary>
+        /// Excel写入数据库 实现函数
+        /// </summary>
+        /// <param name="excelFile"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="connectionString"></param>
         public void TransferData(string excelFile, string sheetName, string connectionString)
         {
             DataSet ds = new DataSet();
