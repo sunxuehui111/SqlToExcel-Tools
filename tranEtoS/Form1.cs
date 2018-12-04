@@ -55,8 +55,6 @@ namespace tranEtoS
         {
             if (inOrout)
             {
-                inOrout = false;
-                button1.Text = "刷新";
                 int m = 0, j = 0;
                 for (; m < clbExcelSheet.Items.Count; m++)
                 {
@@ -91,6 +89,9 @@ namespace tranEtoS
                                 timer.Start();
                             }
                         }
+
+                        inOrout = false;
+                        button1.Text = "刷新";
                     }
                     //MessageBox.Show(string.Format("导入到数据库 {0} 中 {1} 表成功！", cbDataName.SelectedItem.ToString(), lbExcelSheet.SelectedItem.ToString()));
                 }
@@ -330,13 +331,13 @@ namespace tranEtoS
 
 
                 //如果目标表不存在则创建,excel文件的第一行为列标题,从第二行开始全部都是数据记录     
-                string strSql = string.Format("if exists(select * from sysobjects where name = '{0}') drop table {0}  create table {0}(", sheetName);   //以sheetName为表名     
+                string strSql = string.Format("if exists(select * from sysobjects where name = '{0}') truncate table {0}", sheetName);   //以sheetName为表名     
 
-                foreach (System.Data.DataColumn c in ds.Tables[0].Columns)
-                {
-                    strSql += string.Format("[{0}] varchar(255),", c.ColumnName);
-                }
-                strSql = strSql.Trim(',') + ")";
+                //foreach (System.Data.DataColumn c in ds.Tables[0].Columns)
+                //{
+                //    strSql += string.Format("[{0}] varchar(255),", c.ColumnName);
+                //}
+                //strSql = strSql.Trim(',') + ")";
 
                 using (System.Data.SqlClient.SqlConnection sqlconn = new System.Data.SqlClient.SqlConnection(connectionString))
                 {
@@ -395,6 +396,7 @@ namespace tranEtoS
             rbWindows.Checked = false;
             clbExcelSheet.Items.Clear();
             this.pgbWrite.Value = 0;
+            lbDataName.Items.Clear();
             this.Update();
         }
     }
