@@ -62,6 +62,12 @@ namespace SqlToExcel
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if (tbExcelAdr.Text == "")
+            {
+                MessageBox.Show("请选择路径！");
+                return;
+            }
+
             if (inOrout)
             {
                 int m = 0 ,j = 0;
@@ -111,7 +117,7 @@ namespace SqlToExcel
                             }
                             else
                             {
-                                lbwarn.Text = string.Format("当前正在导出{0}表,还有{1}个", clbTableName.GetItemText(clbTableName.Items[i]), clbTableName.Items.Count - i);
+                                lbwarn.Text = string.Format("当前正在导出{0}表,还有{1}个", clbTableName.GetItemText(clbTableName.Items[i]), j - i);
                                 ExportExcel(bufDatatable, savefile);
                             }
                             sqlCon.Close();
@@ -159,6 +165,7 @@ namespace SqlToExcel
                 range = (Excel.Range)worksheet.Cells[1, i + 1];
                 range.Interior.ColorIndex = 15; //15号字体
                 range.Font.Bold = true;//粗体
+                range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
             }
 
             //此段代码为将数据表中的内容导入到excel表中，因此是从第二行开始的
@@ -168,6 +175,8 @@ namespace SqlToExcel
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {
                     worksheet.Cells[r + 2, i + 1] = dt.Rows[r][i].ToString();
+                    range = (Excel.Range)worksheet.Cells[r + 2, i + 1];
+                    range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
                 }
                 rowRead++;
                 percent = ((float)(100 * rowRead)) / totalCount;

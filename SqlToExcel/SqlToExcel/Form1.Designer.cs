@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lbwarn = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.clbTableName = new System.Windows.Forms.CheckedListBox();
             this.cbDataName = new System.Windows.Forms.ComboBox();
             this.btndisCon = new System.Windows.Forms.Button();
@@ -47,8 +49,6 @@
             this.tbExcelAdr = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.lbwarn = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,6 +76,25 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "数据库连接";
+            // 
+            // lbwarn
+            // 
+            this.lbwarn.AutoSize = true;
+            this.lbwarn.Location = new System.Drawing.Point(183, 334);
+            this.lbwarn.Name = "lbwarn";
+            this.lbwarn.Size = new System.Drawing.Size(0, 12);
+            this.lbwarn.TabIndex = 7;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(114, 334);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(48, 16);
+            this.checkBox1.TabIndex = 6;
+            this.checkBox1.Text = "全选";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // clbTableName
             // 
@@ -245,25 +264,6 @@
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(114, 334);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(48, 16);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "全选";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // lbwarn
-            // 
-            this.lbwarn.AutoSize = true;
-            this.lbwarn.Location = new System.Drawing.Point(183, 334);
-            this.lbwarn.Name = "lbwarn";
-            this.lbwarn.Size = new System.Drawing.Size(0, 12);
-            this.lbwarn.TabIndex = 7;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -275,6 +275,7 @@
             this.Controls.Add(this.tbExcelAdr);
             this.Controls.Add(this.btnStart);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SqlToExcel";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
