@@ -47,11 +47,15 @@
             this.tbExcelAdr = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.lbwarn = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lbwarn);
+            this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.clbTableName);
             this.groupBox1.Controls.Add(this.cbDataName);
             this.groupBox1.Controls.Add(this.btndisCon);
@@ -68,7 +72,7 @@
             this.groupBox1.Controls.Add(this.radioButton1);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(382, 339);
+            this.groupBox1.Size = new System.Drawing.Size(382, 356);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "数据库连接";
@@ -241,6 +245,25 @@
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(114, 334);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(48, 16);
+            this.checkBox1.TabIndex = 6;
+            this.checkBox1.Text = "全选";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // lbwarn
+            // 
+            this.lbwarn.AutoSize = true;
+            this.lbwarn.Location = new System.Drawing.Point(183, 334);
+            this.lbwarn.Name = "lbwarn";
+            this.lbwarn.Size = new System.Drawing.Size(0, 12);
+            this.lbwarn.TabIndex = 7;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -281,6 +304,8 @@
         private System.Windows.Forms.TextBox tbExcelAdr;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnOpen;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label lbwarn;
     }
 }
 

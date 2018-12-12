@@ -83,7 +83,7 @@ namespace SqlToExcel
                     {
                         if (clbTableName.GetItemChecked(i))
                         {
-                            string Str = "select * from " + clbTableName.SelectedItem.ToString();
+                            string Str = "select * from " + clbTableName.GetItemText(clbTableName.Items[i]);
                             SqlConnection sqlCon = new SqlConnection(Form1.connString);
                             sqlCon.Open();
                             SqlCommand command = new SqlCommand();
@@ -100,6 +100,7 @@ namespace SqlToExcel
                                 {
                                     //确定按钮的方法
                                     File.Delete(savefile);
+                                    lbwarn.Text = string.Format("当前正在导出{0}表", clbTableName.GetItemText(clbTableName.Items[i]));
                                     ExportExcel(bufDatatable, savefile);
                                 }
                                 else
@@ -110,13 +111,14 @@ namespace SqlToExcel
                             }
                             else
                             {
-                                File.Delete(savefile);
+                                lbwarn.Text = string.Format("当前正在导出{0}表,还有{1}个", clbTableName.GetItemText(clbTableName.Items[i]), clbTableName.Items.Count - i);
                                 ExportExcel(bufDatatable, savefile);
                             }
                             sqlCon.Close();
                         }
                     }
                     MessageBox.Show("导出成功！");
+                    lbwarn.Text = "";
                     inOrout = false;
                     btnStart.Text = "刷新";
                 }
@@ -182,25 +184,47 @@ namespace SqlToExcel
             {
                 MessageBox.Show("有错误：" + ex.ToString());
             }
-            xlApp.Quit();//关闭程序。
+            workbook.Close(true, objectMissing, objectMissing);
             //xlApp.
+            xlApp.Quit();//关闭程序。
             killMethod.Kill(xlApp);
+            releaseObject(workbook);
+            releaseObject(workbooks);
+            releaseObject(xlApp);
+            releaseObject(worksheet); 
         }
         public class killMethod
         {
             [System.Runtime.InteropServices.DllImport("User32.dll")]
-            public static extern int GetWindowThreadProcessID(IntPtr hwnd, out int ID);
+            public static extern int GetWindowThreadProcessId(IntPtr hwnd, out int ID);
             public static void Kill(Excel.Application excel)
             {
                 try
                 {
                     IntPtr t = new IntPtr(excel.Hwnd);
                     int k = 0;
-                    GetWindowThreadProcessID(t, out k);
+                    GetWindowThreadProcessId(t, out k);
                     System.Diagnostics.Process p = System.Diagnostics.Process.GetProcessById(k);
                     p.Kill();
                 }
                 catch { }
+            }
+        }
+
+        public static void releaseObject(object obj)
+        {
+            try
+            {
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
+                obj = null;
+            }
+            catch
+            {
+                obj = null;
+            }
+            finally
+            {
+                GC.Collect();
             }
         }
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -298,7 +322,22 @@ namespace SqlToExcel
             radioButton1.Checked = false;
             radioButton2.Checked = false;
             this.clbTableName.Items.Clear();
+            checkBox1.Checked = false;
             this.Update();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                for (int j = 0; j < clbTableName.Items.Count; j++)
+                    clbTableName.SetItemChecked(j, true);
+            }
+            else
+            {
+                for (int j = 0; j < clbTableName.Items.Count; j++)
+                    clbTableName.SetItemChecked(j, false);
+            }
         }
     }
 }
