@@ -158,8 +158,7 @@ namespace SqlToExcel
             float percent = 0;
 
             //此段代码为表格标题列内容
-
-                for (int i = 0; i < dt.Columns.Count; i++)
+            for (int i = 0; i < dt.Columns.Count; i++)
             {
                 worksheet.Cells[1, i + 1] = dt.Columns[i].ColumnName;//excel的行列是从1开始的  
                 range = (Excel.Range)worksheet.Cells[1, i + 1];
@@ -174,7 +173,8 @@ namespace SqlToExcel
             {
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {
-                    worksheet.Cells[r + 2, i + 1] = dt.Rows[r][i].ToString();
+                    worksheet.Cells[r + 2, i + 1].NumberFormatLocal = "@";
+                    worksheet.Cells[r + 2, i + 1] = dt.Rows[r][i].ToString().Trim();
                     range = (Excel.Range)worksheet.Cells[r + 2, i + 1];
                     range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
                 }
@@ -182,6 +182,7 @@ namespace SqlToExcel
                 percent = ((float)(100 * rowRead)) / totalCount;
             }
             // xlApp.Visible = true;
+            workbook.ActiveSheet.Columns.AutoFit();
             try
             {
                 //因为在之前我们已经创建了excel表，但是之前那个还没有数据，因此需要保存。msdn上介绍了save的用法，
