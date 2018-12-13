@@ -89,38 +89,7 @@ namespace SqlToExcel
                     {
                         if (clbTableName.GetItemChecked(i))
                         {
-                            string Str = "select * from " + clbTableName.GetItemText(clbTableName.Items[i]);
-                            SqlConnection sqlCon = new SqlConnection(Form1.connString);
-                            sqlCon.Open();
-                            SqlCommand command = new SqlCommand();
-                            command.Connection = sqlCon;
-                            command.CommandText = Str;
-                            command.ExecuteNonQuery();
-                            SqlDataAdapter sqldb = new SqlDataAdapter(command);
-                            System.Data.DataTable bufDatatable = new System.Data.DataTable();
-                            sqldb.Fill(bufDatatable);
-                            string savefile = tbExcelAdr.Text + string.Format(@"\{0}.xlsx", clbTableName.GetItemText(clbTableName.Items[i]));
-                            if (File.Exists(savefile))
-                            {
-                                if (MessageBox.Show(string.Format("当前目录已存在文件{0}，是否覆盖并导入", clbTableName.GetItemText(clbTableName.Items[i])), "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-                                {
-                                    //确定按钮的方法
-                                    File.Delete(savefile);
-                                    lbwarn.Text = string.Format("当前正在导出{0}表", clbTableName.GetItemText(clbTableName.Items[i]));
-                                    ExportExcel(bufDatatable, savefile);
-                                }
-                                else
-                                {
-                                    //取消按钮的方法
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                lbwarn.Text = string.Format("当前正在导出{0}表,还有{1}个", clbTableName.GetItemText(clbTableName.Items[i]), j - i);
-                                ExportExcel(bufDatatable, savefile);
-                            }
-                            sqlCon.Close();
+                            startTran(clbTableName.GetItemText(clbTableName.Items[i]));
                         }
                     }
                     MessageBox.Show("导出成功！");
@@ -136,72 +105,158 @@ namespace SqlToExcel
                 initControl();
             }
         }
-
-        public static void ExportExcel(System.Data.DataTable dt, String saveFile)
+        private void startTran(string TableName)
+        {
+            string Str = "select * from " + TableName;
+            SqlConnection sqlCon = new SqlConnection(Form1.connString);
+            sqlCon.Open();
+            SqlCommand command = new SqlCommand();
+            command.Connection = sqlCon;
+            command.CommandText = Str;
+            command.ExecuteNonQuery();
+            SqlDataAdapter sqldb = new SqlDataAdapter(command);
+            System.Data.DataTable bufDatatable = new System.Data.DataTable();
+            sqldb.Fill(bufDatatable);
+            string savefile = tbExcelAdr.Text + string.Format(@"\{0}.xlsx", TableName);
+            if (File.Exists(savefile))
+            {
+                if (MessageBox.Show(string.Format("当前目录已存在文件{0}，是否覆盖并导入", TableName), "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                {
+                    //确定按钮的方法
+                    File.Delete(savefile);
+                    lbwarn.Text = string.Format("当前正在导出{0}表", TableName);
+                    ExportExcel(bufDatatable, savefile, TableName);
+                }
+                else
+                {
+                    //取消按钮的方法
+                    return;
+                }
+            }
+            else
+            {
+                lbwarn.Text = string.Format("当前正在导出{0}表", TableName);
+                ExportExcel(bufDatatable, savefile, TableName);
+            }
+            sqlCon.Close();
+        }
+        public static void ExportExcel(System.Data.DataTable dt, String saveFile,string TableName)
         {
             object objectMissing;
             objectMissing = System.Reflection.Missing.Value;//将一个默认值返回个objectMissing
-            if (dt == null || dt.Rows.Count == 0) return;
-            Excel.Application xlApp = new Excel.Application();//创建Excel应用程序。
-            if (xlApp == null)
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MessageBox.Show("{0} 表为空",TableName);
+                return;
+            }
+            
+            //Excel.Application xlApp = new Excel.Application();//创建Excel应用程序。
+            Excel.Application app = new Excel.Application();//创建Excel应用程序。
+            //if (xlApp == null)
+            //{
+            //    return;
+            //}
+            if (app == null)
             {
                 return;
             }
             //System.Globalization.CultureInfo CurrentCI = System.Threading.Thread.CurrentThread.CurrentCulture;
             //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
-            Excel.Workbooks workbooks = xlApp.Workbooks;//创建一个工作簿集合对象。
-            Excel.Workbook workbook = workbooks.Add(objectMissing);//创建一个新的工作簿
-            Excel.Worksheet worksheet = workbook.Worksheets[1] as Excel.Worksheet;//创建一个工作表对象。
+            //Excel.Workbooks workbooks = xlApp.Workbooks;//创建一个工作簿集合对象。
+            //Excel.Workbook workbook = workbooks.Add(objectMissing);//创建一个新的工作簿
+            //Excel.Worksheet worksheet = workbook.Worksheets[1] as Excel.Worksheet;//创建一个工作表对象。
+            app.Visible = false; //不显示EXCEL
+            app.DisplayAlerts = false; //不提示信息
+            app.ScreenUpdating = false; //停止更新屏幕，加快速度
+            Workbooks wbs = app.Workbooks; //获取工作薄
+            _Workbook wb = wbs.Add(objectMissing); //打开文件
+            Sheets shs = wb.Worksheets; //文件中的Sheets
             Excel.Range range;//创建一个excel表格的范围对象。
-            long totalCount = dt.Rows.Count;  //获取导出数据行数
-            long rowRead = 0;
-            float percent = 0;
-
-            //此段代码为表格标题列内容
-            for (int i = 0; i < dt.Columns.Count; i++)
+            int colCount, rowCount;
+            colCount = dt.Columns.Count;
+            rowCount = dt.Rows.Count;
+            //写入标题行
+            range = wb.Worksheets[1].Range("A1", objectMissing);
+            range = range.get_Resize(1, colCount);
+            range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            range.NumberFormatLocal = "@";
+            object[,] headerData = new object[1, colCount];
+            for (int iCol = 0; iCol < colCount; iCol++)
             {
-                worksheet.Cells[1, i + 1] = dt.Columns[i].ColumnName;//excel的行列是从1开始的  
-                range = (Excel.Range)worksheet.Cells[1, i + 1];
-                range.Interior.ColorIndex = 15; //15号字体
-                range.Font.Bold = true;//粗体
-                range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                headerData[0, iCol] = dt.Columns[iCol].ColumnName;
             }
+            range.set_Value(objectMissing, headerData);
 
-            //此段代码为将数据表中的内容导入到excel表中，因此是从第二行开始的
-
-                for (int r = 0; r < dt.Rows.Count; r++)
+            //写入数据行
+            range = wb.Worksheets[1].Range("A2", objectMissing);
+            range = range.get_Resize(rowCount, colCount);
+            range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            range.NumberFormatLocal = "@";
+            object[,] cellData = new object[rowCount, colCount];
+            for (int iRow = 0; iRow < rowCount; iRow++)
             {
-                for (int i = 0; i < dt.Columns.Count; i++)
+                for (int iCol = 0; iCol < colCount; iCol++)
                 {
-                    worksheet.Cells[r + 2, i + 1].NumberFormatLocal = "@";
-                    worksheet.Cells[r + 2, i + 1] = dt.Rows[r][i].ToString().Trim();
-                    range = (Excel.Range)worksheet.Cells[r + 2, i + 1];
-                    range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    cellData[iRow, iCol] = dt.Rows[iRow][iCol].ToString().Trim();
                 }
-                rowRead++;
-                percent = ((float)(100 * rowRead)) / totalCount;
             }
-            // xlApp.Visible = true;
-            workbook.ActiveSheet.Columns.AutoFit();
-            try
-            {
-                //因为在之前我们已经创建了excel表，但是之前那个还没有数据，因此需要保存。msdn上介绍了save的用法，
-                //“当第一次保存excel表示用SaveAs来进行保存文件，下边具体的参数含义，可以具体参照msdn介绍的WookBool.SaveAs()方法”
-                workbook.SaveAs(saveFile, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing,
-                        XlSaveAsAccessMode.xlExclusive, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("有错误：" + ex.ToString());
-            }
-            workbook.Close(true, objectMissing, objectMissing);
+            range.set_Value(objectMissing, cellData);
+            wb.ActiveSheet.Columns.AutoFit();
+            //long totalCount = dt.Rows.Count;  //获取导出数据行数
+            //long rowRead = 0;
+            //float percent = 0;
+
+            ////此段代码为表格标题列内容
+            //for (int i = 0; i < dt.Columns.Count; i++)
+            //{
+            //    worksheet.Cells[1, i + 1] = dt.Columns[i].ColumnName;//excel的行列是从1开始的  
+            //    range = (Excel.Range)worksheet.Cells[1, i + 1];
+            //    range.Interior.ColorIndex = 15; //15号字体
+            //    range.Font.Bold = true;//粗体
+            //    range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            //}
+
+            ////此段代码为将数据表中的内容导入到excel表中，因此是从第二行开始的
+
+            //    for (int r = 0; r < dt.Rows.Count; r++)
+            //{
+            //    for (int i = 0; i < dt.Columns.Count; i++)
+            //    {
+            //        worksheet.Cells[r + 2, i + 1].NumberFormatLocal = "@";
+            //        worksheet.Cells[r + 2, i + 1] = dt.Rows[r][i].ToString().Trim();
+            //        range = (Excel.Range)worksheet.Cells[r + 2, i + 1];
+            //        range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            //    }
+            //    rowRead++;
+            //    percent = ((float)(100 * rowRead)) / totalCount;
+            //}
+            //// xlApp.Visible = true;
+            //workbook.ActiveSheet.Columns.AutoFit();
+            //try
+            //{
+            //    //因为在之前我们已经创建了excel表，但是之前那个还没有数据，因此需要保存。msdn上介绍了save的用法，
+            //    //“当第一次保存excel表示用SaveAs来进行保存文件，下边具体的参数含义，可以具体参照msdn介绍的WookBool.SaveAs()方法”
+            //    workbook.SaveAs(saveFile, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing,
+            //            XlSaveAsAccessMode.xlExclusive, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("有错误：" + ex.ToString());
+            //}
+            //workbook.Close(true, objectMissing, objectMissing);
             //xlApp.
-            xlApp.Quit();//关闭程序。
-            killMethod.Kill(xlApp);
-            releaseObject(workbook);
-            releaseObject(workbooks);
-            releaseObject(xlApp);
-            releaseObject(worksheet); 
+            //xlApp.Quit();//关闭程序。
+            wb.SaveAs(saveFile, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing,
+                        XlSaveAsAccessMode.xlExclusive, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing);
+            wb.Close(); //关闭工作薄
+            app.Quit(); //关闭EXCEL
+            killMethod.Kill(app);
+            //killMethod.Kill(xlApp);
+            ////releaseObject(workbook);
+            ////releaseObject(workbooks);
+            //releaseObject(xlApp);
+            releaseObject(app);
+            //releaseObject(worksheet); 
         }
         public class killMethod
         {
