@@ -29,15 +29,16 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.lbwarn = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.clbTableName = new System.Windows.Forms.CheckedListBox();
+            this.tbsqlText = new System.Windows.Forms.TextBox();
             this.cbDataName = new System.Windows.Forms.ComboBox();
             this.btndisCon = new System.Windows.Forms.Button();
             this.btnCon = new System.Windows.Forms.Button();
             this.Pwd = new System.Windows.Forms.TextBox();
             this.UID = new System.Windows.Forms.TextBox();
             this.textServer = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -45,24 +46,34 @@
             this.label1 = new System.Windows.Forms.Label();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.lbwarn = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.tbExcelAdr = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.tbExcelName = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.sqlall = new System.Windows.Forms.RadioButton();
+            this.sqlselcet = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.lbwarn);
             this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.clbTableName);
+            this.groupBox1.Controls.Add(this.tbsqlText);
             this.groupBox1.Controls.Add(this.cbDataName);
             this.groupBox1.Controls.Add(this.btndisCon);
             this.groupBox1.Controls.Add(this.btnCon);
             this.groupBox1.Controls.Add(this.Pwd);
             this.groupBox1.Controls.Add(this.UID);
             this.groupBox1.Controls.Add(this.textServer);
+            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
@@ -72,18 +83,10 @@
             this.groupBox1.Controls.Add(this.radioButton1);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(382, 356);
+            this.groupBox1.Size = new System.Drawing.Size(382, 406);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "数据库连接";
-            // 
-            // lbwarn
-            // 
-            this.lbwarn.AutoSize = true;
-            this.lbwarn.Location = new System.Drawing.Point(183, 334);
-            this.lbwarn.Name = "lbwarn";
-            this.lbwarn.Size = new System.Drawing.Size(0, 12);
-            this.lbwarn.TabIndex = 7;
             // 
             // checkBox1
             // 
@@ -103,6 +106,17 @@
             this.clbTableName.Name = "clbTableName";
             this.clbTableName.Size = new System.Drawing.Size(234, 100);
             this.clbTableName.TabIndex = 5;
+            // 
+            // tbsqlText
+            // 
+            this.tbsqlText.Enabled = false;
+            this.tbsqlText.Location = new System.Drawing.Point(114, 361);
+            this.tbsqlText.Multiline = true;
+            this.tbsqlText.Name = "tbsqlText";
+            this.tbsqlText.Size = new System.Drawing.Size(234, 21);
+            this.tbsqlText.TabIndex = 3;
+            this.tbsqlText.Text = "数据库导出不需要输入sql语句";
+            this.tbsqlText.Enter += new System.EventHandler(this.tbsqlText_Enter);
             // 
             // cbDataName
             // 
@@ -158,6 +172,15 @@
             this.textServer.Size = new System.Drawing.Size(234, 21);
             this.textServer.TabIndex = 2;
             this.textServer.Text = "(local)";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(49, 364);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(59, 12);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "sql语句：";
             // 
             // label5
             // 
@@ -228,10 +251,18 @@
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             this.radioButton1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.radioButton1_MouseClick);
             // 
+            // lbwarn
+            // 
+            this.lbwarn.AutoSize = true;
+            this.lbwarn.Location = new System.Drawing.Point(49, 39);
+            this.lbwarn.Name = "lbwarn";
+            this.lbwarn.Size = new System.Drawing.Size(0, 12);
+            this.lbwarn.TabIndex = 7;
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(1, 379);
+            this.label6.Location = new System.Drawing.Point(6, 18);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(119, 12);
             this.label6.TabIndex = 1;
@@ -239,16 +270,17 @@
             // 
             // tbExcelAdr
             // 
-            this.tbExcelAdr.Location = new System.Drawing.Point(126, 376);
+            this.tbExcelAdr.Location = new System.Drawing.Point(131, 15);
+            this.tbExcelAdr.Multiline = true;
             this.tbExcelAdr.Name = "tbExcelAdr";
-            this.tbExcelAdr.Size = new System.Drawing.Size(155, 21);
+            this.tbExcelAdr.Size = new System.Drawing.Size(167, 21);
             this.tbExcelAdr.TabIndex = 2;
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(106, 410);
+            this.btnStart.Location = new System.Drawing.Point(8, 61);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(254, 33);
+            this.btnStart.Size = new System.Drawing.Size(357, 33);
             this.btnStart.TabIndex = 3;
             this.btnStart.Text = "开始导出";
             this.btnStart.UseVisualStyleBackColor = true;
@@ -256,7 +288,7 @@
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(285, 374);
+            this.btnOpen.Location = new System.Drawing.Point(301, 13);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 4;
@@ -264,23 +296,96 @@
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(19, 67);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(95, 12);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "输入Excel名称：";
+            // 
+            // tbExcelName
+            // 
+            this.tbExcelName.Enabled = false;
+            this.tbExcelName.Location = new System.Drawing.Point(131, 64);
+            this.tbExcelName.Multiline = true;
+            this.tbExcelName.Name = "tbExcelName";
+            this.tbExcelName.Size = new System.Drawing.Size(234, 21);
+            this.tbExcelName.TabIndex = 2;
+            this.tbExcelName.Text = "数据库导出不需要输入Excel名称";
+            this.tbExcelName.Enter += new System.EventHandler(this.tbExcelName_Enter);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.btnOpen);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.tbExcelAdr);
+            this.groupBox2.Controls.Add(this.tbExcelName);
+            this.groupBox2.Location = new System.Drawing.Point(12, 424);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(382, 102);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "sql信息";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.lbwarn);
+            this.groupBox3.Controls.Add(this.sqlall);
+            this.groupBox3.Controls.Add(this.sqlselcet);
+            this.groupBox3.Controls.Add(this.btnStart);
+            this.groupBox3.Location = new System.Drawing.Point(12, 532);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(382, 100);
+            this.groupBox3.TabIndex = 6;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "主操作";
+            // 
+            // sqlall
+            // 
+            this.sqlall.AutoSize = true;
+            this.sqlall.Checked = true;
+            this.sqlall.Location = new System.Drawing.Point(51, 20);
+            this.sqlall.Name = "sqlall";
+            this.sqlall.Size = new System.Drawing.Size(95, 16);
+            this.sqlall.TabIndex = 4;
+            this.sqlall.TabStop = true;
+            this.sqlall.Text = "数据库表导出";
+            this.sqlall.UseVisualStyleBackColor = true;
+            this.sqlall.CheckedChanged += new System.EventHandler(this.sqlall_CheckedChanged);
+            // 
+            // sqlselcet
+            // 
+            this.sqlselcet.AutoSize = true;
+            this.sqlselcet.Location = new System.Drawing.Point(253, 20);
+            this.sqlselcet.Name = "sqlselcet";
+            this.sqlselcet.Size = new System.Drawing.Size(89, 16);
+            this.sqlselcet.TabIndex = 4;
+            this.sqlselcet.Text = "sql查询导出";
+            this.sqlselcet.UseVisualStyleBackColor = true;
+            this.sqlselcet.CheckedChanged += new System.EventHandler(this.sqlselcet_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(406, 455);
-            this.Controls.Add(this.btnOpen);
+            this.ClientSize = new System.Drawing.Size(410, 641);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.tbExcelAdr);
-            this.Controls.Add(this.btnStart);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SqlToExcel";
+            this.Activated += new System.EventHandler(this.Form1_Activated);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -307,6 +412,14 @@
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label lbwarn;
+        private System.Windows.Forms.TextBox tbsqlText;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox tbExcelName;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton sqlall;
+        private System.Windows.Forms.RadioButton sqlselcet;
     }
 }
 

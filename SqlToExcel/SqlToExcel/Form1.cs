@@ -19,6 +19,8 @@ namespace SqlToExcel
         public Form1()
         {
             InitializeComponent();
+            tbsqlText.ForeColor = Color.Gray;
+            tbExcelName.ForeColor = Color.Gray;
         }
         public static string connString;
         public bool inOrout = true;
@@ -70,37 +72,64 @@ namespace SqlToExcel
 
             if (inOrout)
             {
-                int m = 0 ,j = 0;
-                for (; m < clbTableName.Items.Count; m++)
+                if (sqlall.Checked)
                 {
-                    if (!clbTableName.GetItemChecked(m))
+                    int m = 0, j = 0;
+                    for (; m < clbTableName.Items.Count; m++)
                     {
-                        j++;
-                    }
-                }
-                if (m == j)
-                {
-                    MessageBox.Show("请选择数据库表！");
-                    return;
-                }
-                else
-                {
-                    for (int i = 0; i < clbTableName.Items.Count; i++)
-                    {
-                        if (clbTableName.GetItemChecked(i))
+                        if (!clbTableName.GetItemChecked(m))
                         {
-                            startTran(clbTableName.GetItemText(clbTableName.Items[i]));
+                            j++;
                         }
                     }
-                    MessageBox.Show("导出成功！");
-                    lbwarn.Text = "";
-                    inOrout = false;
-                    btnStart.Text = "刷新";
+                    if (m == j)
+                    {
+                        MessageBox.Show("请选择数据库表！");
+                        return;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < clbTableName.Items.Count; i++)
+                        {
+                            if (clbTableName.GetItemChecked(i))
+                            {
+                                startTran(clbTableName.GetItemText(clbTableName.Items[i]));
+                            }
+                        }
+                        MessageBox.Show("导出成功！");
+                        lbwarn.Text = "";
+                        inOrout = false;
+                        btnStart.Text = "刷新";
+                    }
+                }
+                else if (sqlselcet.Checked)
+                {
+                    if (tbExcelAdr.Text == "")
+                    {
+                        MessageBox.Show("请选择路径！");
+                        return;
+                    }
+                    if (tbExcelName.Text == "")
+                    {
+                        MessageBox.Show("请输入名称！");
+                        return;
+                    }
+                    if (tbsqlText.Text == "")
+                    {
+                        MessageBox.Show("请输入sql语句！");
+                        return;
+                    }
+                    if (startTransql(tbsqlText.Text))
+                    {
+                        MessageBox.Show("导出成功！");
+                        inOrout = false;
+                        btnStart.Text = "刷新";
+                    }
                 }
             }
             else
             {
-                btnStart.Text = "导入";
+                btnStart.Text = "开始导出";
                 inOrout = true;
                 initControl();
             }
@@ -140,13 +169,174 @@ namespace SqlToExcel
             }
             sqlCon.Close();
         }
+
+        private bool startTransql(string sqlStr)
+        {
+            SqlConnection sqlCon = new SqlConnection(Form1.connString);
+            sqlCon.Open();
+            SqlCommand command = new SqlCommand();
+            command.Connection = sqlCon;
+            command.CommandText = sqlStr;
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("sql语句有误");
+                return false;
+            }
+            SqlDataAdapter sqldb = new SqlDataAdapter(command);
+            System.Data.DataTable bufDatatable = new System.Data.DataTable();
+            sqldb.Fill(bufDatatable);
+            string savefile = tbExcelAdr.Text + string.Format(@"\{0}.xlsx", tbExcelName.Text);
+            if (File.Exists(savefile))
+            {
+                if (MessageBox.Show(string.Format("当前目录已存在文件{0}，是否覆盖并导入", tbExcelName.Text), "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                {
+                    //确定按钮的方法
+                    File.Delete(savefile);
+                    ExportExcelsql(bufDatatable, savefile, tbExcelName.Text);
+                }
+                else
+                {
+                    //取消按钮的方法
+                    return false;
+                }
+            }
+            else
+            {
+                ExportExcelsql(bufDatatable, savefile, tbExcelName.Text);
+            }
+            sqlCon.Close();
+            return true;
+        }
+
+        public static void ExportExcelsql(System.Data.DataTable dt, String saveFile,string tableName)
+        {
+            object objectMissing;
+            objectMissing = System.Reflection.Missing.Value;//将一个默认值返回个objectMissing
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MessageBox.Show("查询数据为空");
+                return;
+            }
+
+            //Excel.Application xlApp = new Excel.Application();//创建Excel应用程序。
+            Excel.Application app = new Excel.Application();//创建Excel应用程序。
+            //if (xlApp == null)
+            //{
+            //    return;
+            //}
+            if (app == null)
+            {
+                return;
+            }
+            //System.Globalization.CultureInfo CurrentCI = System.Threading.Thread.CurrentThread.CurrentCulture;
+            //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            //Excel.Workbooks workbooks = xlApp.Workbooks;//创建一个工作簿集合对象。
+            //Excel.Workbook workbook = workbooks.Add(objectMissing);//创建一个新的工作簿
+            //Excel.Worksheet worksheet = workbook.Worksheets[1] as Excel.Worksheet;//创建一个工作表对象。
+            app.Visible = false; //不显示EXCEL
+            app.DisplayAlerts = false; //不提示信息
+            app.ScreenUpdating = false; //停止更新屏幕，加快速度
+            Workbooks wbs = app.Workbooks; //获取工作薄
+            _Workbook wb = wbs.Add(objectMissing); //打开文件
+            Sheets shs = wb.Worksheets; //文件中的Sheets
+            Excel.Range range;//创建一个excel表格的范围对象。
+            int colCount, rowCount;
+            colCount = dt.Columns.Count;
+            rowCount = dt.Rows.Count;
+            //写入标题行
+            range = wb.Worksheets[1].Range("A1", objectMissing);
+            range = range.get_Resize(1, colCount);
+            range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            range.NumberFormatLocal = "@";
+            object[,] headerData = new object[1, colCount];
+            for (int iCol = 0; iCol < colCount; iCol++)
+            {
+                headerData[0, iCol] = dt.Columns[iCol].ColumnName;
+            }
+            range.set_Value(objectMissing, headerData);
+
+            //写入数据行
+            range = wb.Worksheets[1].Range("A2", objectMissing);
+            range = range.get_Resize(rowCount, colCount);
+            range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            range.NumberFormatLocal = "@";
+            object[,] cellData = new object[rowCount, colCount];
+            for (int iRow = 0; iRow < rowCount; iRow++)
+            {
+                for (int iCol = 0; iCol < colCount; iCol++)
+                {
+                    cellData[iRow, iCol] = dt.Rows[iRow][iCol].ToString().Trim();
+                }
+            }
+            range.set_Value(objectMissing, cellData);
+            wb.Worksheets[1].Name =  
+            wb.ActiveSheet.Columns.AutoFit();
+            //long totalCount = dt.Rows.Count;  //获取导出数据行数
+            //long rowRead = 0;
+            //float percent = 0;
+
+            ////此段代码为表格标题列内容
+            //for (int i = 0; i < dt.Columns.Count; i++)
+            //{
+            //    worksheet.Cells[1, i + 1] = dt.Columns[i].ColumnName;//excel的行列是从1开始的  
+            //    range = (Excel.Range)worksheet.Cells[1, i + 1];
+            //    range.Interior.ColorIndex = 15; //15号字体
+            //    range.Font.Bold = true;//粗体
+            //    range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            //}
+
+            ////此段代码为将数据表中的内容导入到excel表中，因此是从第二行开始的
+
+            //    for (int r = 0; r < dt.Rows.Count; r++)
+            //{
+            //    for (int i = 0; i < dt.Columns.Count; i++)
+            //    {
+            //        worksheet.Cells[r + 2, i + 1].NumberFormatLocal = "@";
+            //        worksheet.Cells[r + 2, i + 1] = dt.Rows[r][i].ToString().Trim();
+            //        range = (Excel.Range)worksheet.Cells[r + 2, i + 1];
+            //        range.HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            //    }
+            //    rowRead++;
+            //    percent = ((float)(100 * rowRead)) / totalCount;
+            //}
+            //// xlApp.Visible = true;
+            //workbook.ActiveSheet.Columns.AutoFit();
+            //try
+            //{
+            //    //因为在之前我们已经创建了excel表，但是之前那个还没有数据，因此需要保存。msdn上介绍了save的用法，
+            //    //“当第一次保存excel表示用SaveAs来进行保存文件，下边具体的参数含义，可以具体参照msdn介绍的WookBool.SaveAs()方法”
+            //    workbook.SaveAs(saveFile, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing,
+            //            XlSaveAsAccessMode.xlExclusive, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("有错误：" + ex.ToString());
+            //}
+            //workbook.Close(true, objectMissing, objectMissing);
+            //xlApp.
+            //xlApp.Quit();//关闭程序。
+            wb.SaveAs(saveFile, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing,
+                        XlSaveAsAccessMode.xlExclusive, objectMissing, objectMissing, objectMissing, objectMissing, objectMissing);
+            wb.Close(); //关闭工作薄
+            app.Quit(); //关闭EXCEL
+            killMethod.Kill(app);
+            //killMethod.Kill(xlApp);
+            ////releaseObject(workbook);
+            ////releaseObject(workbooks);
+            //releaseObject(xlApp);
+            releaseObject(app);
+            //releaseObject(worksheet); 
+        }
         public static void ExportExcel(System.Data.DataTable dt, String saveFile,string TableName)
         {
             object objectMissing;
             objectMissing = System.Reflection.Missing.Value;//将一个默认值返回个objectMissing
             if (dt == null || dt.Rows.Count == 0)
             {
-                MessageBox.Show("{0} 表为空",TableName);
                 return;
             }
             
@@ -201,6 +391,7 @@ namespace SqlToExcel
                 }
             }
             range.set_Value(objectMissing, cellData);
+            wb.Worksheets[1].Name = TableName;
             wb.ActiveSheet.Columns.AutoFit();
             //long totalCount = dt.Rows.Count;  //获取导出数据行数
             //long rowRead = 0;
@@ -383,6 +574,8 @@ namespace SqlToExcel
             UID.ReadOnly = true;
             Pwd.Text = "";
             Pwd.ReadOnly = true;
+            tbExcelName.Text = "";
+            tbsqlText.Text = "";
             this.cbDataName.Items.Clear();
             radioButton1.Checked = false;
             radioButton2.Checked = false;
@@ -402,6 +595,45 @@ namespace SqlToExcel
             {
                 for (int j = 0; j < clbTableName.Items.Count; j++)
                     clbTableName.SetItemChecked(j, false);
+            }
+        }
+
+        private void tbsqlText_Enter(object sender, EventArgs e)
+        {
+            tbsqlText.Text = "";
+            tbsqlText.ForeColor = Color.Black;
+        }
+
+        private void tbExcelName_Enter(object sender, EventArgs e)
+        {
+            tbExcelName.Text = "";
+            tbExcelName.ForeColor = Color.Black;
+        }
+
+        private void Form1_Activated(object sender, EventArgs e)
+        {
+            btnStart.Focus();
+        }
+
+        private void sqlall_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sqlall.Checked)
+            {
+                tbExcelName.Enabled = false;
+                tbsqlText.Enabled = false;
+                clbTableName.Enabled = true;
+                checkBox1.Enabled = true;
+            }
+        }
+
+        private void sqlselcet_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sqlselcet.Checked)
+            {
+                tbsqlText.Enabled = true;
+                tbExcelName.Enabled = true;
+                clbTableName.Enabled = false;
+                checkBox1.Enabled = false;
             }
         }
     }
